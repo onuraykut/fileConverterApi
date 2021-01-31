@@ -9,21 +9,23 @@ import org.springframework.web.client.RestTemplate;
 
 public class PushNotificationServiceImpl {
     private final String FIREBASE_API_URL = "https://fcm.googleapis.com/fcm/send";
-    private final String FIREBASE_SERVER_KEY = "AAAAUUps8vw:APA91bFIfywanUfQTWtApzHfaGy23ZgRhz4E9hWqRWXs0gHZgRDfboDpHrbAsDw_KELHgduj4MDJOS_8ipj5m8rDduwB0mjIEBHCApEaEwPzUo9o2GMgqTFbzDQyAhse9SwRhkrMHXpB";
-    private final String messageTitle = "";
-    private final String message = "";
+    private final String FIREBASE_SERVER_KEY = "AAAAttKIJSQ:APA91bHBYRk2WHzzp-ygbQ8pT4FnNijnWeXMJJvw4xARTvTeLOJ8hsRtS3Ech3oipvRgqAOAfduHjH2JOqJyBH4PvXgX25lCrH5BXZdec_fuA1sotuPgNy20vdOcd1RwlBp83qHaPt9r";
+    private final String messageTitle = "Dosya başarıyla dönüştürüldü";
+    private final String message = "İndirmek için tıkla";
     
-    public void sendPushNotification(String key) {
+    public void sendPushNotification(String key,String url) {
 
 
         JSONObject msg = new JSONObject();
 
         msg.put("title", messageTitle);
         msg.put("body", message);
+        msg.put("url", url);
         msg.put("click_action", "FLUTTER_NOTIFICATION_CLICK");
 
   
         String response = callToFcmServer(msg, key);
+        System.out.println(response);
 
     }
 
