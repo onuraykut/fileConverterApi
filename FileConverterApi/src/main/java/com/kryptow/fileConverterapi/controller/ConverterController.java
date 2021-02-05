@@ -32,7 +32,7 @@ public class ConverterController {
 	private String fileName;
 	
 	@PostMapping("/upload")
-    public String singleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("ext") String ext,@RequestParam String token) throws IOException, InterruptedException {
+    public String singleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("ext") String ext,@RequestParam String token,@RequestParam String languageCode) throws IOException, InterruptedException {
         if (file.isEmpty()) {
             return "uploadStatus";
         }
@@ -62,7 +62,7 @@ public class ConverterController {
 				 Runnable r = new Runnable() {
 			         public void run() {
 			        	  try {
-							executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token);
+							executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
 						} catch (IOException | InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -74,10 +74,10 @@ public class ConverterController {
         return URL+FileBaseName.getBaseName(fileName)+"."+ext;
     }
 	
-	private void executeScript(String fileName,String outputName,String ext,String token) throws IOException, InterruptedException {
+	private void executeScript(String fileName,String outputName,String ext,String token,String languageCode) throws IOException, InterruptedException {
 		 Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 proc.waitFor();
-		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext);
+		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
 	}
 	
 }
