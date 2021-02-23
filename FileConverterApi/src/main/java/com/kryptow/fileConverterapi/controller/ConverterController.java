@@ -59,17 +59,19 @@ public class ConverterController {
 					file.getInputStream().close();
 				}
 		
-				 Runnable r = new Runnable() {
+				try {
+					executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
+				} catch (IOException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				/* Runnable r = new Runnable() {
 			         public void run() {
-			        	  try {
-							executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
-						} catch (IOException | InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+			        	  
 			         }
 			     };
-			     new Thread(r).start();
+			     new Thread(r).start(); */
 }
         return URL+FileBaseName.getBaseName(fileName)+"."+ext;
     }
