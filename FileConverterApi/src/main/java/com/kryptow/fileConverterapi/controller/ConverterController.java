@@ -82,16 +82,14 @@ public class ConverterController {
 		 Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 //proc.waitFor();
 		 
-
-		 long freeE1s;
-		 try (BufferedReader buf =
-				 new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
-			 freeE1s = buf.lines().filter(line -> line.contains("Idle")).count();
+		 BufferedReader in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+		 String line;
+		 while ((line = in.readLine()) != null) {
+		     System.out.println(line);
 		 }
-
 		 proc.waitFor();
-
-		 System.out.println(freeE1s);
+		 in.close();
+		 System.out.println(line);
 		 
 		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
 	}
