@@ -14,6 +14,7 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +40,8 @@ public class ConverterController {
             return "uploadStatus";
         }
         fileName = file.getOriginalFilename();
-       
+        fileName = StringUtils.trimAllWhitespace(fileName);
+       // fileName = fileName.replaceAll("\\s+","");
         try {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(UPLOADED_FOLDER + fileName);
