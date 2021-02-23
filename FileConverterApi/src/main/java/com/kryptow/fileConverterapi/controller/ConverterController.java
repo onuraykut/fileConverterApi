@@ -1,8 +1,10 @@
 package com.kryptow.fileConverterapi.controller;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,6 +81,18 @@ public class ConverterController {
 	private void executeScript(String fileName,String outputName,String ext,String token,String languageCode) throws IOException, InterruptedException {
 		 Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 proc.waitFor();
+		 
+
+		 long freeE1s;
+		 try (BufferedReader buf =
+				 new BufferedReader(new InputStreamReader(proc.getInputStream()))) {
+			 freeE1s = buf.lines().filter(line -> line.contains("Idle")).count();
+		 }
+
+		 proc.waitFor();
+
+		 System.out.println(freeE1s);
+		 
 		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
 	}
 	
