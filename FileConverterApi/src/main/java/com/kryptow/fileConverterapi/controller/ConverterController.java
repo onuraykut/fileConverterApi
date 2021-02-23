@@ -81,7 +81,7 @@ public class ConverterController {
     }
 	
 	private void executeScript(String fileName,String outputName,String ext,String token,String languageCode) throws IOException, InterruptedException {
-		 Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
+		 //Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 //proc.waitFor();
 		 
 		 ProcessBuilder   ps=new ProcessBuilder("sh",shFolder,UPLOADED_FOLDER+fileName,OUTPUT_FOLDER+outputName+"."+ext);
