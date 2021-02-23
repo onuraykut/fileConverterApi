@@ -82,14 +82,25 @@ public class ConverterController {
 		 Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 //proc.waitFor();
 		 
-		 BufferedReader in = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-		 String line;
-		 while ((line = in.readLine()) != null) {
-		     System.out.println(line);
-		 }
-		 proc.waitFor();
-		 in.close();
-		 System.out.println(line);
+		 ProcessBuilder   ps=new ProcessBuilder("sh",shFolder,UPLOADED_FOLDER+fileName,OUTPUT_FOLDER+outputName+"."+ext);
+
+		//From the DOC:  Initially, this property is false, meaning that the 
+		//standard output and error output of a subprocess are sent to two 
+		//separate streams
+		ps.redirectErrorStream(true);
+
+		Process pr = ps.start();  
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+		String line;
+		while ((line = in.readLine()) != null) {
+		    System.out.println(line);
+		}
+		pr.waitFor();
+		System.out.println("ok!");
+
+		in.close();
+	//	System.exit(0);
 		 
 		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
 	}
