@@ -18,12 +18,14 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.*;
 import com.kryptow.fileConverterapi.tools.FileBaseName;
 import com.kryptow.fileConverterapi.tools.FileWatcher;
 import com.kryptow.fileConverterapi.tools.PushNotificationServiceImpl;
+import com.kryptow.fileConverterapi.tools.ResponseTransfer;
 
 @RestController
 @RequestMapping("/convert")
@@ -35,10 +37,9 @@ public class ConverterController {
 	private String fileName;
 	
 	@PostMapping("/upload")
-    public String singleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("ext") String ext,@RequestParam String token,@RequestParam String languageCode) throws IOException, InterruptedException {
-        if (file.isEmpty()) {
-            return "uploadStatus";
-        }
+	@ResponseBody
+    public ResponseTransfer singleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("ext") String ext,@RequestParam String token,@RequestParam String languageCode) throws IOException, InterruptedException {
+        
         fileName = file.getOriginalFilename();
         fileName = StringUtils.trimAllWhitespace(fileName);
        // fileName = fileName.replaceAll("\\s+","");
@@ -65,6 +66,7 @@ public class ConverterController {
 		
 				try {
 					executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
+					return 	new ResponseTransfer(false,"error");
 				} catch (IOException | InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -77,34 +79,35 @@ public class ConverterController {
 			     };
 			     new Thread(r).start(); */
 }
-        return URL+FileBaseName.getBaseName(fileName)+"."+ext;
+        return 	new ResponseTransfer(false,"error");				
     }
 	
-	private void executeScript(String fileName,String outputName,String ext,String token,String languageCode) throws IOException, InterruptedException {
+	private ResponseTransfer executeScript(String fileName,String outputName,String ext,String token,String languageCode) throws IOException, InterruptedException {
 		 //Process proc = Runtime.getRuntime().exec("sh "+shFolder+" "+UPLOADED_FOLDER+fileName+" "+OUTPUT_FOLDER+outputName+"."+ext);                    
 		 //proc.waitFor();
-		 
-		 ProcessBuilder   ps=new ProcessBuilder("sh",shFolder,UPLOADED_FOLDER+fileName,OUTPUT_FOLDER+outputName+"."+ext);
-
-		//From the DOC:  Initially, this property is false, meaning that the 
-		//standard output and error output of a subprocess are sent to two 
-		//separate streams
+		ResponseTransfer responseTransfer = new ResponseTransfer(false,"error");
+		
+		ProcessBuilder   ps=new ProcessBuilder("sh",shFolder,UPLOADED_FOLDER+fileName,OUTPUT_FOLDER+outputName+"."+ext);
 		ps.redirectErrorStream(true);
-
 		Process pr = ps.start();  
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 		String line;
 		while ((line = in.readLine()) != null) {
 		    System.out.println(line);
+		    if(line.contains("Output saved to"))
+		    	responseTransfer = new ResponseTransfer(true, "SUCCESS",URL+FileBaseName.getBaseName(fileName)+"."+ext);
+		 else if(line.contains("DRM"))
+			 responseTransfer = new ResponseTransfer(false,"DRM ERROR");
 		}
 		pr.waitFor();
 		System.out.println("ok!");
 
 		in.close();
-	//	System.exit(0);
 		 
 		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
+		 
+		 return responseTransfer;
 	}
 	
 }
