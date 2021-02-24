@@ -104,8 +104,14 @@ public class ConverterController {
 
 		in.close();
 		
-		 if(responseTransfer.getStatus())
-		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
+		 if(responseTransfer.getStatus()) {
+		     Runnable r = new Runnable() {
+		         public void run() {
+		    		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
+		         }
+		     };
+		     new Thread(r).start();
+		 }
 		 
 		 return responseTransfer;
 	}
