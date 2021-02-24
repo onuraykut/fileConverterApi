@@ -65,8 +65,7 @@ public class ConverterController {
 				}
 		
 				try {
-					executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
-					return 	new ResponseTransfer(false,"error");
+					return executeScript(fileName,FileBaseName.getBaseName(fileName),ext,token,languageCode);
 				} catch (IOException | InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
