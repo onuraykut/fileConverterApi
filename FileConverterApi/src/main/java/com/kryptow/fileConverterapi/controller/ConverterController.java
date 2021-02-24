@@ -103,7 +103,8 @@ public class ConverterController {
 		System.out.println("ok!");
 
 		in.close();
-		 
+		
+		 if(responseTransfer.getStatus())
 		 new PushNotificationServiceImpl().sendPushNotification(token,URL+outputName+"."+ext,languageCode);
 		 
 		 return responseTransfer;
