@@ -33,7 +33,7 @@ public class ConverterController {
 	private static String UPLOADED_FOLDER = "/var/www/html/fileconverter/upload/";
 	private static String OUTPUT_FOLDER = "/var/www/html/fileconverter/output/";
 	private static String shFolder = "/home/converter.sh";
-	private static String URL = "http://148.251.168.11/fileconverter/output/";
+	private static String URL = "http://fileconverter.webredirect.org/fileconverter/output/";
 	private String fileName;
 	
 	@PostMapping("/upload")
